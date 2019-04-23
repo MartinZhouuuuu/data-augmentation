@@ -20,34 +20,35 @@ model.add(Dropout(0.2))
 model.add(MaxPooling2D(2,2))
 model.add(Flatten())
 model.add(Dense(10, activation = 'softmax'))
-model.compile(optimizer = 'Adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
+model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
 train_datagen = ImageDataGenerator(
-	rotation_range = 20,
+	rotation_range = 0.2,
 	width_shift_range = 0.2,
 	height_shift_range = 0.2,
 	rescale =  1./255,
 	shear_range = 0.2,
 	zoom_range = 0.2,
-	fill_mode = 'nearest'
+	fill_mode = 'nearest',
 	)
 train_generator = train_datagen.flow_from_directory(
-	'/Users/apple/Desktop/trainingSet',
+	'trainingSet',
 	target_size = (28,28),
-	batch_size = 16,
+	batch_size = 1,
 	class_mode = 'categorical',
-	color_mode = 'grayscale')
+	color_mode = 'grayscale',
+	)
 '''test_datagen = ImageDataGenerator(
 	rescale = 1./255)
 test_generator = test_datagen.flow_from_directory(
 	'/Users/apple/Desktop/testSet',
-	target_size = (28.28),
+	target_size = (28,28),
 	batch_size = 16,
 	class_mode = 'categorical',
 	color_mode = 'grayscale')'''
 model.fit_generator(
 	train_generator,
-	steps_per_epoch = 3000,
+	steps_per_epoch = 60000,
 	epochs = 10
 	)
 
