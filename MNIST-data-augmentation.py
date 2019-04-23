@@ -10,15 +10,21 @@ test_images = test_images.reshape((10000,28,28,1))
 test_images = test_images.astype('float32') / 255
 test_labels = to_categorical(test_labels)
 
-model = Sequential()
+model = models.Sequential()
+#convolution
 model.add(Conv2D(32,(5,5), activation = 'relu', 
 	input_shape = (28,28,1)))
-model.add(Dropout(0.2))
+model.add(Conv2D(32,(5,5), activation = 'relu', ))
 model.add(MaxPooling2D((2,2)))
-model.add(Conv2D(64,(5,5),activation = 'relu'))
 model.add(Dropout(0.2))
+model.add(Conv2D(64,(5,5),activation = 'relu'))
+model.add(Conv2D(64,(5,5),activation = 'relu'))
 model.add(MaxPooling2D(2,2))
+model.add(Dropout(0.2))
+#convert 3D tensor to 1D
 model.add(Flatten())
+model.add(Dense(256,activation = 'relu'))
+model.add(Dropout(0.5))
 model.add(Dense(10, activation = 'softmax'))
 model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
