@@ -10,11 +10,12 @@ test_images = test_images.reshape((10000,28,28,1))
 test_images = test_images.astype('float32') / 255
 test_labels = to_categorical(test_labels)
 
-model = models.Sequential()
+model = Sequential()
 #convolution
 model.add(Conv2D(32,(5,5), activation = 'relu', 
 	input_shape = (28,28,1)))
 model.add(Conv2D(32,(5,5), activation = 'relu', ))
+model.add(BatchNormalization())
 model.add(MaxPooling2D((2,2)))
 model.add(Dropout(0.2))
 model.add(Conv2D(64,(5,5),activation = 'relu'))
