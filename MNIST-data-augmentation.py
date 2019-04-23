@@ -11,25 +11,35 @@ test_images = test_images.astype('float32') / 255
 test_labels = to_categorical(test_labels)
 
 model = Sequential()
+#convolution
 model.add(Conv2D(32,(5,5), activation = 'relu', 
 	input_shape = (28,28,1)))
-model.add(Dropout(0.2))
+#model.add(BatchNormalization())
+model.add(Conv2D(32,(5,5), activation = 'relu', ))
+#model.add(BatchNormalization())
 model.add(MaxPooling2D((2,2)))
+model.add(Dropout(0.25))
 model.add(Conv2D(64,(5,5),activation = 'relu'))
-model.add(Dropout(0.2))
+#model.add(BatchNormalization())
+model.add(Conv2D(64,(5,5),activation = 'relu'))
+#model.add(BatchNormalization())
 model.add(MaxPooling2D(2,2))
+model.add(Dropout(0.25))
+#convert 3D tensor to 1D
 model.add(Flatten())
+model.add(Dense(256,activation = 'relu'))
+model.add(Dropout(0.5))
 model.add(Dense(10, activation = 'softmax'))
 model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
 train_datagen = ImageDataGenerator(
 	rotation_range = 0.2,
-	width_shift_range = 0.2,
-	height_shift_range = 0.2,
 	rescale =  1./255,
-	shear_range = 0.2,
-	zoom_range = 0.2,
+	shear_range = 0.05,
+	zoom_range = 0.05,
 	fill_mode = 'nearest',
+	featurewise_center = True,
+	featurewise_std_normalization = True
 	)
 train_generator = train_datagen.flow_from_directory(
 	'trainingSet',
@@ -48,8 +58,8 @@ test_generator = test_datagen.flow_from_directory(
 	color_mode = 'grayscale')'''
 model.fit_generator(
 	train_generator,
-	steps_per_epoch = 60000,
-	epochs = 10
+	steps_per_epoch = 80000,
+	epochs = 50
 	)
 
 test_loss, test_accuracy = model.evaluate(test_images,test_labels)
