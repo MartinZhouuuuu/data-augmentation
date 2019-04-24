@@ -48,18 +48,21 @@ train_generator = train_datagen.flow_from_directory(
 	class_mode = 'categorical',
 	color_mode = 'grayscale',
 	)
-'''test_datagen = ImageDataGenerator(
+test_datagen = ImageDataGenerator(
 	rescale = 1./255)
+
 test_generator = test_datagen.flow_from_directory(
-	'/Users/apple/Desktop/testSet',
+	'testSet',
 	target_size = (28,28),
 	batch_size = 16,
 	class_mode = 'categorical',
-	color_mode = 'grayscale')'''
+	color_mode = 'grayscale')
+
 model.fit_generator(
 	train_generator,
 	steps_per_epoch = 80000,
-	epochs = 50
+	epochs = 50,
+	validation_data = test_generator,
+	validation_steps = 1000
 	)
 
-test_loss, test_accuracy = model.evaluate(test_images,test_labels)
