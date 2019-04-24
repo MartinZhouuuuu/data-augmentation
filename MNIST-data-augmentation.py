@@ -4,7 +4,7 @@ from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import *
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
-
+from imgaug import augmenters as iaa
 (ti,tl),(test_images,test_labels) = mnist.load_data()
 test_images = test_images.reshape((10000,28,28,1))
 test_images = test_images.astype('float32') / 255
@@ -32,6 +32,13 @@ model.add(Dropout(0.5))
 model.add(Dense(10, activation = 'softmax'))
 model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
+aug_1 = iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05*255), per_channel=0.5)
+aug_2 = iaa.Invert(1)
+def augmentation(image):
+	image = aug_1.augment_image(image)
+	image = aug_2.augment_image(image)
+	return image
+
 train_datagen = ImageDataGenerator(
 	rotation_range = 0.2,
 	rescale =  1./255,
@@ -49,20 +56,22 @@ train_generator = train_datagen.flow_from_directory(
 	color_mode = 'grayscale',
 	)
 test_datagen = ImageDataGenerator(
-	rescale = 1./255)
+	rescale = 1./255,
+	preprocessing_function = augmentation)
 
 test_generator = test_datagen.flow_from_directory(
 	'testSet',
 	target_size = (28,28),
 	batch_size = 1,
 	class_mode = 'categorical',
-	color_mode = 'grayscale')
+	color_mode = 'grayscale',
+	save_to_dir = 'test_aug')
 
 model.fit_generator(
 	train_generator,
 	steps_per_epoch = 60000,
 	epochs = 30,
 	validation_data = test_generator,
-	validation_steps = 10000
+	validation_steps = 100
 	)
 
