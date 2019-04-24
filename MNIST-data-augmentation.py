@@ -54,15 +54,15 @@ test_datagen = ImageDataGenerator(
 test_generator = test_datagen.flow_from_directory(
 	'testSet',
 	target_size = (28,28),
-	batch_size = 16,
+	batch_size = 1,
 	class_mode = 'categorical',
 	color_mode = 'grayscale')
 
 model.fit_generator(
 	train_generator,
-	steps_per_epoch = 80000,
-	epochs = 50,
+	steps_per_epoch = 60000,
+	epochs = 30,
 	validation_data = test_generator,
-	validation_steps = 1000
+	validation_steps = 10000
 	)
 
