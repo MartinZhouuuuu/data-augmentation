@@ -15,7 +15,7 @@ model = Sequential()
 model.add(Conv2D(32,(5,5), activation = 'relu', 
 	input_shape = (28,28,1)))
 #model.add(BatchNormalization())
-model.add(Conv2D(32,(5,5), activation = 'relu', ))
+model.add(Conv2D(32,(5,5), activation = 'relu'))
 #model.add(BatchNormalization())
 model.add(MaxPooling2D((2,2)))
 model.add(Dropout(0.25))
@@ -33,7 +33,7 @@ model.add(Dense(10, activation = 'softmax'))
 model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
 aug_1 = iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05*255), per_channel=0.5)
-aug_2 = iaa.Invert(1)
+aug_2 = iaa.Invert(0.5)
 def augmentation(image):
 	image = aug_1.augment_image(image)
 	image = aug_2.augment_image(image)
@@ -46,7 +46,8 @@ train_datagen = ImageDataGenerator(
 	zoom_range = 0.05,
 	fill_mode = 'nearest',
 	featurewise_center = True,
-	featurewise_std_normalization = True
+	featurewise_std_normalization = True,
+	preprocessing_function = augmentation
 	)
 train_generator = train_datagen.flow_from_directory(
 	'trainingSet',
@@ -64,14 +65,13 @@ test_generator = test_datagen.flow_from_directory(
 	target_size = (28,28),
 	batch_size = 1,
 	class_mode = 'categorical',
-	color_mode = 'grayscale',
-	save_to_dir = 'test_aug')
+	color_mode = 'grayscale')
 
 model.fit_generator(
 	train_generator,
 	steps_per_epoch = 60000,
 	epochs = 30,
 	validation_data = test_generator,
-	validation_steps = 100
+	validation_steps = 1000
 	)
 
